@@ -221,6 +221,9 @@ public partial class MainWindow : SukiWindow
     private bool _refreshingComboBoxes;
     private Dictionary<string, Dictionary<string, List<string>>> _brandTree = new();
 
+    /// <summary>
+    /// 初始化主窗口、连接管理和用户设置；按稳定标记恢复弹窗选项，兼容原有时长配置。
+    /// </summary>
     public MainWindow()
     {
         _podSession = new PodManagerSession(() => new PodManager(), OnStateChanged);
@@ -367,21 +370,14 @@ public partial class MainWindow : SukiWindow
             var autoUpdate = SettingsManager.GetString("AutoCheckUpdate");
             CbAutoUpdate.IsChecked = autoUpdate != "false"; // 首次 null → true
 
-            // 弹窗时长
-            var durIdx = SettingsManager.GetInt("ToastDuration", 2);
-            CbToastDuration.SelectedIndex = durIdx >= 0 && durIdx <= 5 ? durIdx : 2;
+            InitializeToastDurationSelection();
         }
         finally
         {
             _initializingSettings = false;
         }
 
-        CbToastDuration.SelectionChanged += (_, _) =>
-        {
-            if (_refreshingComboBoxes || _initializingSettings) return;
-            SettingsManager.SetInt("ToastDuration", CbToastDuration.SelectedIndex);
-            Log.D("UI", $"设置: Toast 时长索引 -> {CbToastDuration.SelectedIndex}");
-        };
+        CbToastDuration.SelectionChanged += CbToastDuration_SelectionChanged;
 
         // 背景设置
         _bgSelected = SettingsManager.GetString("BgCurrent") ?? "default";
@@ -2025,11 +2021,31 @@ public partial class MainWindow : SukiWindow
         return GetStableModelName();
     }
 
-    /// <summary>根据用户设置获取弹窗时长（毫秒）。默认=5000ms。</summary>
+    /// <summary>按持久化标记恢复时长选择；0–5 仍对应原有 3–8 秒，6 表示关闭，非法值回退到 5 秒。</summary>
+    private void InitializeToastDurationSelection()
+    {
+        var index = SettingsManager.GetInt("ToastDuration", 2);
+        if (index is < 0 or > 6) index = 2;
+        CbToastDuration.SelectedItem = CbToastDuration.Items.OfType<ComboBoxItem>()
+            .First(item => item.Tag?.ToString() == index.ToString());
+    }
+
+    /// <summary>保存选项的稳定标记，不保存其显示位置；忽略初始化、语言刷新和临时取消选中事件。</summary>
+    private void CbToastDuration_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_refreshingComboBoxes || _initializingSettings
+            || CbToastDuration.SelectedItem is not ComboBoxItem item
+            || !int.TryParse(item.Tag?.ToString(), out var index)
+            || index is < 0 or > 6) return;
+        SettingsManager.SetInt("ToastDuration", index);
+        Log.D("UI", $"设置: Toast 时长标记 -> {index}");
+    }
+
+    /// <summary>将兼容 v1.1.10 的存储索引转换为毫秒；新增标记 6 返回 0 以关闭自动弹窗，默认仍为 5 秒。</summary>
     private int GetToastDuration()
     {
         var idx = SettingsManager.GetInt("ToastDuration", 2);
-        return idx switch { 0 => 3000, 1 => 4000, 3 => 6000, 4 => 7000, 5 => 8000, _ => 5000 };
+        return idx switch { 0 => 3000, 1 => 4000, 3 => 6000, 4 => 7000, 5 => 8000, 6 => 0, _ => 5000 };
     }
 
     private static ToastType GetBatteryToastType(PodState state)
@@ -4651,8 +4667,11 @@ public partial class MainWindow : SukiWindow
         await DoCheckUpdateAsync(silent: true);
     }
 
+    /// <summary>检查版本更新；0 秒设置抑制后台检查和自动提示，手动检查仍显示结果与下载操作。</summary>
     private async Task DoCheckUpdateAsync(bool silent = false)
     {
+        if (silent && GetToastDuration() == 0) return;
+
         try
         {
             // 发送 Accept-Language，让更新服务器按当前界面语言返回翻译后的更新说明。
@@ -4701,6 +4720,9 @@ public partial class MainWindow : SukiWindow
                     Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
                 return;
             }
+
+            // 请求期间也可能关闭弹窗；再次读取设置，避免延迟响应弹出 Toast 或主窗口内的更新对话框。
+            if (GetToastDuration() == 0) return;
 
             var shouldUseToast = !IsVisible || WindowState == WindowState.Minimized || !IsActive;
             if (shouldUseToast)

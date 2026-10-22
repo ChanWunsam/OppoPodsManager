@@ -106,6 +106,7 @@
   "About_Acknowledgments": "Danksagungen",
   "About_FontNotice": "Diese Software verwendet die Schriftart MiSans. Urheberrechte und Lizenzbedingungen richten sich nach den offiziellen Angaben von Xiaomi.",
   "Personal_ToastDurationDefault": "5 s (Standard)",
+  "Personal_ToastDurationOff": "0 s (Aus)",
   "Toast_NewVersion": "Neue Version verfügbar",
   "Toast_VersionLabel": "Version: {0}",
   "Eq_Title": "Soundeffekte",

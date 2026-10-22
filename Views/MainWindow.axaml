@@ -662,12 +662,14 @@
         <TextBlock Text="{Translate {x:Static l10n:LanguageManager+Keys.Personal_ToastDuration}}" FontSize="13" VerticalAlignment="Center"
            Foreground="{DynamicResource SukiText}"/>
         <ComboBox x:Name="CbToastDuration" Height="28" Padding="8,0" Width="140" HorizontalAlignment="Left">
-         <ComboBoxItem Content="3s"/>
-         <ComboBoxItem Content="4s"/>
-          <ComboBoxItem Content="{Translate {x:Static l10n:LanguageManager+Keys.Personal_ToastDurationDefault}}"/>
-         <ComboBoxItem Content="6s"/>
-         <ComboBoxItem Content="7s"/>
-         <ComboBoxItem Content="8s"/>
+         <!-- Tag 保留 v1.1.10 的存储索引；新增关闭选项不会改变已有 3–8 秒设置。 -->
+         <ComboBoxItem Tag="6" Content="{Translate {x:Static l10n:LanguageManager+Keys.Personal_ToastDurationOff}}"/>
+         <ComboBoxItem Tag="0" Content="3s"/>
+         <ComboBoxItem Tag="1" Content="4s"/>
+         <ComboBoxItem Tag="2" Content="{Translate {x:Static l10n:LanguageManager+Keys.Personal_ToastDurationDefault}}"/>
+         <ComboBoxItem Tag="3" Content="6s"/>
+         <ComboBoxItem Tag="4" Content="7s"/>
+         <ComboBoxItem Tag="5" Content="8s"/>
         </ComboBox>
        </StackPanel>
       </StackPanel>

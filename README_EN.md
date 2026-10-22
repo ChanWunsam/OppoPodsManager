@@ -96,6 +96,8 @@ Main window, top to bottom:
 
 **Settings page**: manual model override (searchable), custom device name, game-mode implementation, theme, minimize-to-tray, auto-start.
 
+**Personalization → Toast Duration**: select **0s (Off)** to disable connection, disconnection, low/critical battery notifications and background update prompts. You can still open the main window, view battery levels and check for updates manually. Select 3–8 seconds to enable notifications again; existing duration settings and the 5-second default are preserved.
+
 **About page**: version info and acknowledgements.
 
 ---

@@ -106,6 +106,7 @@
   "About_Acknowledgments": "Acknowledgments",
   "About_FontNotice": "This software uses the MiSans font. Copyright and licensing information is subject to Xiaomi's official terms.",
   "Personal_ToastDurationDefault": "5s (Default)",
+  "Personal_ToastDurationOff": "0s (Off)",
   "Eq_Title": "Sound Effects",
   "Eq_SoundEffects": "Sound Effects",
   "Eq_PresetList": "Preset List",
