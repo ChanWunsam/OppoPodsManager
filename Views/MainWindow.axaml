@@ -658,6 +658,10 @@
          <Path Data="M3,12A9,9 0,1 0,6.64 4.75M3,4V12H11" Stroke="{DynamicResource SukiText}" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform"/>
         </Button>
        </StackPanel>
+       <CheckBox x:Name="CbDisableAutoPopups"
+        Content="{Translate {x:Static l10n:LanguageManager+Keys.Personal_DisableAutoPopups}}"/>
+       <TextBlock Text="{Translate {x:Static l10n:LanguageManager+Keys.Personal_DisableAutoPopupsHint}}"
+        FontSize="12" Opacity="0.6" TextWrapping="Wrap" Foreground="{DynamicResource SukiText}"/>
        <StackPanel Orientation="Horizontal" Spacing="12">
         <TextBlock Text="{Translate {x:Static l10n:LanguageManager+Keys.Personal_ToastDuration}}" FontSize="13" VerticalAlignment="Center"
            Foreground="{DynamicResource SukiText}"/>

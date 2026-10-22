@@ -151,6 +151,12 @@ public static class SettingsManager
         }
     }
 
+    /// <summary>读取独立的自动弹窗开关；未设置时保留 v1.1.10 默认显示通知的行为。</summary>
+    public static bool AreAutomaticPopupsDisabled() => GetBool("DisableAutoPopups", false);
+
+    /// <summary>保存自动弹窗开关；关闭开关恢复默认通知行为，不改写已选时长或自动检查更新设置。</summary>
+    public static void SetAutomaticPopupsDisabled(bool disabled) => SetBool("DisableAutoPopups", disabled);
+
     public static string? GetString(string key, string? defaultValue = null)
     {
         var data = Load();
