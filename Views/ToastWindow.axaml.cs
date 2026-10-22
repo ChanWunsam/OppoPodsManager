@@ -46,7 +46,7 @@ public partial class ToastWindow : Window
 
 
     /// <summary>
-    /// 显示设备状态 Toast；时长小于等于 0 时直接返回，不创建窗口、不播放动画。
+    /// 显示设备状态 Toast；自动弹窗已关闭或时长无效时直接返回，不创建窗口、不影响状态刷新。
     /// - Battery: 电量面板（连接成功时）
     /// - LowBattery: 电量面板 + 低电量遮罩（低于 20%）
     /// - CriticalBattery: 电量面板 + 极低电量遮罩（低于 5%）
@@ -55,7 +55,7 @@ public partial class ToastWindow : Window
     public static async Task ShowAsync(PodState? state, string deviceName,
         ToastType type = ToastType.Battery, int durationMs = 5000)
     {
-        if (durationMs <= 0) return;
+        if (SettingsManager.AreAutomaticPopupsDisabled() || durationMs <= 0) return;
 
         Log.D("UI", $"Toast: 显示 type={type} device=\"{deviceName}\" duration={durationMs}ms");
         var toast = new ToastWindow();
